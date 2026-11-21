@@ -5,6 +5,7 @@ const express   = require('express');
 const jwt       = require('jsonwebtoken');
 const bcrypt    = require('bcryptjs');
 const cors      = require('cors');
+const path = require('path');
 const { Pool }  = require('pg');
 require('dotenv').config();
 
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('../frontend')); // Serve frontend from /frontend
+app.use(express.static(path.join(__dirname, '..', 'frontend'))); // Serve frontend from /frontend
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const JWT_SECRET = process.env.JWT_SECRET || 'unitrack_secret_2024';
@@ -353,6 +354,10 @@ app.delete('/api/users/:id', authMiddleware(['Admin']), async (req, res) => {
 });
 
 // ---- START ----
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`\n✅ UniTrack API running on http://localhost:${PORT}`);
   console.log(`   Frontend: http://localhost:${PORT}`);
